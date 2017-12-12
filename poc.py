@@ -1,11 +1,11 @@
-"""An attempt to get REST data by http work on the data and put the result in a file."""
+"""A prototype - gets some REST data from the web and puts some of it in tab seaparated file."""
 
 import requests # See http://docs.python-requests.org/en/master/user/install/#install"
 
 # Config. Would be better in a separate file.
 SOURCE_API = 'https://jsonplaceholder.typicode.com/users'
 FIELDS_TO_EXTRACT = ('name', 'email', 'phone')
-OUTPUT_FILE = './output/prototype/regency.txt'
+OUTPUT_FILE = './output/prototype/regency.tsv'
 
 def api_reader(target_url):
     "Gets json data from an API and returns a list of json objects"
@@ -13,47 +13,35 @@ def api_reader(target_url):
     json_list = my_request.json()
     return json_list
 
-def extract_fields(json_records, json_fields):
-    "Extract specified fields from records and send back as a list of tab separated values"
-    number_of_records = len(json_records)
-    number_of_fields = len(json_fields)
-    results_list = []
+def tabulate(json_records, json_fields):
+    "Convert list of json records into a table containing the fields requested"
+    table = []
+    row = []
+    # Add headings in the first row of the table using the field names requested
+    for heading in json_fields:
+        row.append(heading)
+    table.append(row)
+    # Iterate through each record and the required elements
+    for record in json_records:
+        row = []
+        for j in range(0, len(json_fields)):
+            row.append(record[json_fields[j]])
+        table.append(row)
+    return table
 
-    for i in range(0, number_of_records):
-        json_record = json_records.pop()
-        line = ''
-        for j in range(0, number_of_fields):
-            line += json_record[json_fields[j]]
-            # add a tab separator unless this is the final field
-            if j+1 != number_of_fields:
-                line += '\t'
-        results_list.insert(i, line)
-
-    line = ''
-    for j in range(0, number_of_fields):
-        line += json_fields[j]
-        # add a tab separator unless this is the final field
-        if j+1 != number_of_fields:
-            line += '\t'
-    results_list.append(line)
-
-
-    return results_list
-
-def save_list(list_to_write):
-    "Writes a list to a text file"
-    output_file = open(OUTPUT_FILE, 'w')
-    while list_to_write:
-        output_file.write(list_to_write.pop()+'\n')
-    output_file.close()
+def save_tsvlist(list_to_write, file_name):
+    "Writes a 2D list to a tab delimited file"
+    with open(file_name, 'w') as thefile:
+        thefile.writelines('\t'.join(i) + '\n' for i in list_to_write)
+    thefile.close()
     return
 
 def main():
     "Run the program"
     print("starting Regency Reports...")
-    records = api_reader(SOURCE_API)
-    extracted = extract_fields(records, FIELDS_TO_EXTRACT)
-    save_list(extracted)
+    source_data = api_reader(SOURCE_API)
+    tabulated_data = tabulate(source_data, FIELDS_TO_EXTRACT)
+    save_tsvlist(tabulated_data, OUTPUT_FILE)
 
 if __name__ == "__main__":
     main()
