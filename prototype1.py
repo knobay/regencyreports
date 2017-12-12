@@ -7,6 +7,8 @@ import requests
 # Maybe we should just package the whole thing
 
 FIELDS_TO_EXTRACT = ('name', 'phone', 'email', 'website')
+SOURCE_API = 'https://jsonplaceholder.typicode.com/users'
+TARGET_FILE = 'regency_proto1.txt'
 # should be moved to a config file and assumes we know these fields are present
 
 def api_reader(target_url):
@@ -42,7 +44,7 @@ def extract_fields(json_records, json_fields):
 
 def write_list(list_to_write):
     "Bung the list passed in a text file"
-    fileything = open("regency.tsv", 'w')
+    fileything = open(TARGET_FILE, 'w')
     while list_to_write:
         fileything.write(list_to_write.pop()+'\n')
     fileything.close()
@@ -51,7 +53,7 @@ def write_list(list_to_write):
 def main():
     "Run the program"
     print("starting Regency Reports...")
-    records = api_reader('https://jsonplaceholder.typicode.com/users')
+    records = api_reader(SOURCE_API)
     extracted = extract_fields(records, FIELDS_TO_EXTRACT)
     write_list(extracted)
 
