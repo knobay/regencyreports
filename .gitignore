@@ -1,1 +1,3 @@
 .vscode/*
+lib_datacollector/__pycache__
+/output/prototype/*
