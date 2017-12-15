@@ -8,6 +8,14 @@ def read(target_url):
     json_list = my_request.json()
     return json_list
 
+def read_authenticated(target_url):
+    "Gets json data from a REST API and returns a list of json objects"
+    login = input('enter username for jira project')
+    passw = input('enter password for jira project')
+    my_request = requests.get(target_url, auth=(login, passw))
+    json_list = my_request.json()
+    return json_list
+
 def tabulate(json_records, json_fields):
     "Converts list of json records into a table containing the fields requested"
     table = []
