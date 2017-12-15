@@ -3,8 +3,8 @@
 import requests # See http://docs.python-requests.org/en/master/user/install/#install"
 
 def read(target_url):
-    "Gets json data from an API and returns a list of json objects"
-    my_request = requests.get(target_url, stream=True) # stream may not matter
+    "Gets json data from a REST API and returns a list of json objects"
+    my_request = requests.get(target_url)
     json_list = my_request.json()
     return json_list
 
@@ -28,5 +28,4 @@ def save(list_to_write, file_name):
     "Writes a 2D list to a tab delimited file"
     with open(file_name, 'w') as thefile:
         thefile.writelines('\t'.join(i) + '\n' for i in list_to_write)
-    thefile.close()
-    return
+    return True
