@@ -1,4 +1,4 @@
-"""Library of basic datacollection, manipulation and saving functions for Regency Reports"""
+"""Basic functions for datacollection, manipulation and saving functions for Regency Reports"""
 
 import requests # See http://docs.python-requests.org/en/master/user/install/#install"
 
@@ -24,7 +24,7 @@ def tabulate(json_records, json_fields):
         table.append(row)
     return table
 
-def savetsv(list_to_write, file_name):
+def save(list_to_write, file_name):
     "Writes a 2D list to a tab delimited file"
     with open(file_name, 'w') as thefile:
         thefile.writelines('\t'.join(i) + '\n' for i in list_to_write)
