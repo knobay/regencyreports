@@ -1,0 +1,1 @@
+A hobby project to poll data from systems like jira and produce offline reports

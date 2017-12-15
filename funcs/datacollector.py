@@ -2,7 +2,7 @@
 
 import requests # See http://docs.python-requests.org/en/master/user/install/#install"
 
-def reader(target_url):
+def read(target_url):
     "Gets json data from an API and returns a list of json objects"
     my_request = requests.get(target_url, stream=True) # stream may not matter
     json_list = my_request.json()

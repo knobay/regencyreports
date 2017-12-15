@@ -11,9 +11,10 @@ TARGET = 'https://newsapi.org/v2/top-headlines?sources=the-new-york-times&apiKey
 def main():
     "run the program"
     print('Getting New York Times latest files and writing to a text file.')
-    mydata = datacollector.reader(TARGET)
+    mydata = datacollector.read(TARGET)
     jsonlist = mydata['articles']
     alltitles = datacollector.tabulate(jsonlist, FIELDS)
     datacollector.savetsv(alltitles, 'output/prototype/nytitles.tsv')
 
-main()
+if __name__ == "__main__":
+    main()
