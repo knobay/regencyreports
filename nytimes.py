@@ -1,8 +1,9 @@
-"""Use regency reports functions to get the latest from the New York Times and save"""
+"""Get the latest from the New York Times and save to a file"""
 
-import sys
-sys.path.append('funcs')
-import datacollector
+from library.datacollector import read
+from library.datacollector import tabulate
+from library.datacollector import save
+
 
 FIELDS = ('title', 'author')
 FILE = './output/prototype/nyt.tsv'
@@ -11,10 +12,10 @@ TARGET = 'https://newsapi.org/v2/top-headlines?sources=the-new-york-times&apiKey
 def main():
     "run the program"
     print('Getting New York Times latest files and writing to a text file.')
-    mydata = datacollector.read(TARGET)
+    mydata = read(TARGET)
     jsonlist = mydata['articles']
-    alltitles = datacollector.tabulate(jsonlist, FIELDS)
-    datacollector.savetsv(alltitles, 'output/prototype/nytitles.tsv')
+    alltitles = tabulate(jsonlist, FIELDS)
+    save(alltitles, 'output/prototype/nytitles.tsv')
 
 if __name__ == "__main__":
     main()
