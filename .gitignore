@@ -1,3 +1,4 @@
 .vscode/*
-funcs/__pycache__/*
+__pycache__/
+*.py[cod]
 
