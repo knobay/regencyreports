@@ -2,7 +2,7 @@
 
 # Import the functions needed from the regency reports library
 
-from library.datacollector import read_jira_with_login
+from library.datacollector import read_jira
 from library.datacollector import tabulate
 from library.datacollector import save
 
@@ -15,7 +15,7 @@ TARGET = 'https://jempython.atlassian.net/rest/api/2/search?jql=issuetype=Bug&st
 def main():
     "run the program"
     print('Starting Regency Reports - backlog issues...')
-    data = read_jira_with_login(TARGET, 0)   # get list containg feed (issues + other stuff)
+    data = read_jira(TARGET, 0)   # get list containg feed (issues + other stuff)
     json_issues = data['issues']   # get list containing just json issues
     tabulated_issues = tabulate(json_issues, FIELDS)
     save(tabulated_issues, FILE)

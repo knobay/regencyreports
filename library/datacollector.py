@@ -9,13 +9,21 @@ def read(target_url):
     json_list = my_request.json()
     return json_list
 
-def read_jira_with_login(target_url, startpage):
-    "Gets Jira issues, user enters password"
-    print('connecting to Jira on \n{0}\nNeed account details...'.format(target_url))
+def login_jira(target_project):
+    "Login to a Jira project"
+    print('connecting to Jira project {0}\nNeed account details...'.format(target_project))
     login = input('Username: ')
     pswd = getpass.getpass('Password:')
+    getattempt = requests.get('https://{0}.atlassian.net/rest/auth/1/session'.format(target_project), auth=(login, pswd))
+    if getattempt.status_code == 200:
+        return True
+    else:
+        return False
+
+def read_jira(target_url, startpage):
+    "Gets Jira issues from the requested URL at the requested start page assuming already logged in"
     target_url += '?startAt={0}'.format(startpage)
-    my_request = requests.get(target_url, auth=(login, pswd))
+    my_request = requests.get(target_url)
     json_list = my_request.json()
     return json_list
 
