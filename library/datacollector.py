@@ -10,22 +10,25 @@ def read(target_url):
     return json_list
 
 def login_jira(target_project):
-    "Login to a Jira project"
+    "Login to a Jira project and return a session object"
     print('connecting to Jira project {0}\nNeed account details...'.format(target_project))
     login = input('Username: ')
     pswd = getpass.getpass('Password:')
-    getattempt = requests.get('https://{0}.atlassian.net/rest/auth/1/session'.format(target_project), auth=(login, pswd))
-    if getattempt.status_code == 200:
-        return True
+    jira_session = requests.Session()
+    jira_session.auth = (login, pswd)
+    jira_response = jira_session.get('https://{0}.atlassian.net/rest/auth/1/session'.format(target_project))
+    if jira_response.status_code == 200:
+        return jira_session
     else:
         return False
 
-def read_jira(target_url, startpage):
-    "Gets Jira issues from the requested URL at the requested start page assuming already logged in"
-    target_url += '?startAt={0}'.format(startpage)
-    my_request = requests.get(target_url)
+def read_jira_issues(target_project, current_session, startpage):
+    "Gets Jira issues from the requested project at the requested start page"
+    target_url = 'https://{0}.atlassian.net/rest/api/2/search?startAt={1}'.format(target_project, startpage)
+    my_request = current_session.get(target_url)
     json_list = my_request.json()
     return json_list
+    # HANDLE PAGINATION - STILL TO DO
 
 def flatten_jira_issues(issueslist):
     "Extract useful properties issues and put in 2d list of issues"
