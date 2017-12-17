@@ -16,7 +16,7 @@ TARGET = 'https://jempython.atlassian.net/rest/api/2/search'
 def main():
     "run the program"
     print('Starting Regency Reports ...')
-    data = read_jira_with_login(TARGET)   # get list containg feed (issues + other stuff)
+    data = read_jira_with_login(TARGET, 0)   # get list containg feed (issues + other stuff)
     json_issues = flatten_jira_issues(data) # get 2d list containing jira issues
     tabulated_issues = tabulate(json_issues, FIELDS)
     save(tabulated_issues, 'output/prototype/issues.tsv')

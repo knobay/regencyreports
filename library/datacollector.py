@@ -9,11 +9,12 @@ def read(target_url):
     json_list = my_request.json()
     return json_list
 
-def read_jira_with_login(target_url):
+def read_jira_with_login(target_url, startpage):
     "Gets Jira issues, user enters password"
     print('connecting to Jira on \n{0}\nNeed account details...'.format(target_url))
     login = input('Username: ')
     pswd = getpass.getpass('Password:')
+    target_url += '?startAt={0}'.format(startpage)
     my_request = requests.get(target_url, auth=(login, pswd))
     json_list = my_request.json()
     return json_list
