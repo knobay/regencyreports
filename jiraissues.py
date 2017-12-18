@@ -7,6 +7,7 @@ from library.datacollector import tabulate
 from library.datacollector import save
 from library.datacollector import flatten_jira_issues
 from library.datacollector import login_jira
+from library.datacollector import get_jira_pagingation_data
 
 # Config with constants. Could be better in a separate file.
 
@@ -18,7 +19,8 @@ def main():
     "run the program"
     print('Starting Regency Reports ...')
     session = login_jira(PROJECT)
-    data = read_jira_issues(PROJECT, session, 0)   # get list containg feed (issues + other stuff)
+    pagination_info = get_jira_pagingation_data(PROJECT, session)
+    data = read_jira_issues(PROJECT, session, pagination_info)   # get feed (issues + other stuff)
     json_issues = flatten_jira_issues(data) # get 2d list containing jira issues
     tabulated_issues = tabulate(json_issues, FIELDS)
     save(tabulated_issues, 'output/prototype/issues.tsv')

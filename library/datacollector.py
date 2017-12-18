@@ -22,21 +22,34 @@ def login_jira(target_project):
     else:
         return False
 
-def read_jira_issues(target_project, current_session, startpage):
-    "Gets Jira issues from the requested project at the requested start page"
-    target_url = 'https://{0}.atlassian.net/rest/api/2/search?startAt={1}'.format(target_project, startpage)
+def get_jira_pagingation_data(target_project, current_session):
+    "Get the the total number of issues and the max issues returned per page"
+    target_url = 'https://{0}.atlassian.net/rest/api/2/search'.format(target_project)
     my_request = current_session.get(target_url)
     json_list = my_request.json()
-    return json_list
-    # HANDLE PAGINATION - STILL TO DO
+    metadata = (json_list['total'], json_list['maxResults'])
+    return metadata
+
+def read_jira_issues(target_project, current_session, pagination_info):
+    "Gets all Jira issues from the requested project"
+    totalresults = pagination_info[0] # total issues in the project
+    maxresults = pagination_info[1] # maximum returned by the API per page
+    json_issues = []
+    startpage = 0
+    while startpage < totalresults:
+        target_url = 'https://{0}.atlassian.net/rest/api/2/search?startAt={1}'.format(target_project, startpage)
+        my_request = current_session.get(target_url)
+        json_list = my_request.json()
+        json_issues.extend(json_list['issues'])
+        startpage += maxresults
+    return json_issues
 
 def flatten_jira_issues(issueslist):
     "Extract useful properties issues and put in 2d list of issues"
-    json_issues = issueslist['issues']
+    #json_issues = issueslist['issues']
     issues_list = []
-    for issue in json_issues:
+    for issue in issueslist:
         issue_fields = {}
-
         issue_fields['url'] = issue['self']
         issue_fields['id'] = issue['key']
         issue_fields['summary'] = issue['fields']['summary']
@@ -48,19 +61,15 @@ def flatten_jira_issues(issueslist):
         issue_fields['type'] = issue['fields']['issuetype']['name']
         issue_fields['project'] = issue['fields']['project']['name']
         issue_fields['status'] = issue['fields']['status']['name']
-
         if issue['fields']['assignee'] != None:
             issue_fields['assignee'] = issue['fields']['assignee']['emailAddress']
         else:
             issue_fields['assignee'] = 'Not assigned'
-
         if issue['fields']['description']:
             issue_fields['description'] = issue['fields']['description'].replace('\r', ' ').replace('\n', ' ').replace('\t', ' ')
         else:
             issue_fields['description'] = 'No description'
-
         issues_list.append(issue_fields)
-
     return issues_list
 
 def tabulate(json_records, json_fields):
